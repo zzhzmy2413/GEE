@@ -1,0 +1,295 @@
+//cloud removal
+function maskS2clouds(image) {
+  var qa = image.select('QA60')
+
+  var cloudBitMask = 1 << 10;
+  var cirrusBitMask = 1 << 11;
+
+  var mask = qa.bitwiseAnd(cloudBitMask).eq(0).and(
+             qa.bitwiseAnd(cirrusBitMask).eq(0))
+
+  return image.updateMask(mask)
+      .select("B.*")
+      .copyProperties(image, ["system:time_start"])
+}
+var tiles = ['29UPA'];
+// for a specific gemetry used before
+var collection = ee.ImageCollection("COPERNICUS/S2_SR")
+    .filterDate('2022-06-06', '2022-07-30')
+
+    .filter(ee.Filter.inList('MGRS_TILE', tiles))
+var collection1 = ee.ImageCollection("COPERNICUS/S2_SR")
+    .filterDate('2022-04-13', '2022-06-05')
+
+    .filter(ee.Filter.inList('MGRS_TILE', tiles))
+var collection2 = ee.ImageCollection("COPERNICUS/S2_SR")
+    .filterDate('2022-02-15', '2022-04-12')
+
+    .filter(ee.Filter.inList('MGRS_TILE', tiles))
+var collection3 = ee.ImageCollection("COPERNICUS/S2_SR")
+    .filterDate('2021-12-28', '2022-02-14')
+
+    .filter(ee.Filter.inList('MGRS_TILE', tiles))
+var collection4 = ee.ImageCollection("COPERNICUS/S2_SR")
+    .filterDate('2021-11-05', '2021-12-27')
+
+    .filter(ee.Filter.inList('MGRS_TILE', tiles))
+var collection5 = ee.ImageCollection("COPERNICUS/S2_SR")
+    .filterDate('2021-09-15', '2021-11-04')
+
+    .filter(ee.Filter.inList('MGRS_TILE', tiles))
+var collection6 = ee.ImageCollection("COPERNICUS/S2_SR")
+    .filterDate('2021-07-25', '2021-09-14')
+
+    .filter(ee.Filter.inList('MGRS_TILE', tiles))
+var collection7 = ee.ImageCollection("COPERNICUS/S2_SR")
+    .filterDate('2021-05-27', '2021-07-24')
+
+    .filter(ee.Filter.inList('MGRS_TILE', tiles))
+var collection8 = ee.ImageCollection("COPERNICUS/S2_SR")
+    .filterDate('2021-04-01', '2021-05-26')
+
+    .filter(ee.Filter.inList('MGRS_TILE', tiles))
+var collection9 = ee.ImageCollection("COPERNICUS/S2_SR")
+    .filterDate('2021-02-05', '2021-03-31')
+
+    .filter(ee.Filter.inList('MGRS_TILE', tiles))
+var collection10 = ee.ImageCollection("COPERNICUS/S2_SR")
+    .filterDate('2020-12-15', '2021-02-04')
+
+    .filter(ee.Filter.inList('MGRS_TILE', tiles))
+var collection11 = ee.ImageCollection("COPERNICUS/S2_SR")
+    .filterDate('2020-10-20', '2020-12-14')
+
+    .filter(ee.Filter.inList('MGRS_TILE', tiles))
+var collection12 = ee.ImageCollection("COPERNICUS/S2_SR")
+    .filterDate('2017-12-25', '2018-02-19')
+    .filter(ee.Filter.inList('MGRS_TILE', tiles))
+
+var collection13 = ee.ImageCollection("COPERNICUS/S2_SR")
+    .filterDate('2017-09-10', '2017-12-25')
+    .filter(ee.Filter.inList('MGRS_TILE', tiles))
+
+var collection14 = ee.ImageCollection("COPERNICUS/S2_SR")
+    .filterDate('2017-05-05', '2017-09-09')
+    .filter(ee.Filter.inList('MGRS_TILE', tiles))
+
+var collection15 = ee.ImageCollection("COPERNICUS/S2_SR")
+     .filterDate('2017-03-28', '2017-05-04')
+    .filter(ee.Filter.inList('MGRS_TILE', tiles))
+
+
+var collectioncloud = collection.map(maskS2clouds)
+var collectioncloud1 = collection1.map(maskS2clouds)
+var collectioncloud2 = collection2.map(maskS2clouds)
+var collectioncloud3 = collection3.map(maskS2clouds)
+var collectioncloud4 = collection4.map(maskS2clouds)
+var collectioncloud5 = collection5.map(maskS2clouds)
+var collectioncloud6 = collection6.map(maskS2clouds)
+var collectioncloud7 = collection7.map(maskS2clouds)
+var collectioncloud8 = collection8.map(maskS2clouds)
+var collectioncloud9 = collection9.map(maskS2clouds)
+var collectioncloud10 = collection10.map(maskS2clouds)
+var collectioncloud11 = collection11.map(maskS2clouds)
+var collectioncloud12 = collection12.map(maskS2clouds)
+var collectioncloud13 = collection13.map(maskS2clouds)
+var collectioncloud14 = collection14.map(maskS2clouds)
+var collectioncloud15 = collection15.map(maskS2clouds)
+
+
+
+
+
+var b4 = collectioncloud15.select('B4');
+var proj_10m = b4.first()//Access to the first image of the colection 
+              .projection();//this is an object with all the information about the projection needed for a 10m resolution
+
+function resample(image) { 
+    var b8A = image.select('B8A');
+    var b8A_res = b8A.resample('bilinear').reproject(proj_10m);
+    return image.addBands(b8A_res)
+                .copyProperties(image,['system:time_start']); //try to add the resampled band to the image collection
+}
+
+var b8A_res = collectioncloud.map(resample);
+var b8A_res1 = collectioncloud1.map(resample);
+var b8A_res2 = collectioncloud2.map(resample);
+var b8A_res3 = collectioncloud3.map(resample);
+var b8A_res4 = collectioncloud4.map(resample);
+var b8A_res5 = collectioncloud5.map(resample);
+var b8A_res6 = collectioncloud6.map(resample);
+var b8A_res7 = collectioncloud7.map(resample);
+var b8A_res8 = collectioncloud8.map(resample);
+var b8A_res9 = collectioncloud9.map(resample);
+var b8A_res10 = collectioncloud10.map(resample);
+var b8A_res11 = collectioncloud11.map(resample);
+var b8A_res12 = collectioncloud12.map(resample);
+var b8A_res13 = collectioncloud13.map(resample);
+var b8A_res14 = collectioncloud14.map(resample);
+var b8A_res15 = collectioncloud15.map(resample);
+
+
+print(collectioncloud,'collection')
+print(b8A_res15,'b8A')
+var shp1 = ee.FeatureCollection('projects/minyanaddtionlparameters/assets/10_29UPA')
+Map.addLayer(shp1.draw({color: '0000FF', pointRadius: 1}),{},'29UMA')
+var chart =ui. Chart.image.seriesByRegion({
+  imageCollection: b8A_res,
+  regions: shp1,
+  reducer: ee.Reducer.mean(),
+  band: 'B8A_1',
+  scale: 10,
+  xProperty: 'system:time_start',
+  seriesProperty:'FID_'
+})
+print(chart,'chart')
+var chart1 =ui. Chart.image.seriesByRegion({
+  imageCollection: b8A_res1,
+  regions: shp1,
+  reducer: ee.Reducer.mean(),
+  band: 'B8A_1',
+  scale: 10,
+  xProperty: 'system:time_start',
+  seriesProperty:'FID_'
+})
+print(chart1,'chart1')
+var chart2 =ui. Chart.image.seriesByRegion({
+  imageCollection: b8A_res2,
+  regions: shp1,
+  reducer: ee.Reducer.mean(),
+  band: 'B8A_1',
+  scale: 10,
+  xProperty: 'system:time_start',
+  seriesProperty:'FID_'
+})
+print(chart2,'chart2')
+var chart3 =ui. Chart.image.seriesByRegion({
+  imageCollection: b8A_res3,
+  regions: shp1,
+  reducer: ee.Reducer.mean(),
+  band: 'B8A_1',
+  scale: 10,
+  xProperty: 'system:time_start',
+  seriesProperty:'FID_'
+})
+print(chart3,'chart3')
+var chart4 =ui. Chart.image.seriesByRegion({
+  imageCollection: b8A_res4,
+  regions: shp1,
+  reducer: ee.Reducer.mean(),
+  band: 'B8A_1',
+  scale: 10,
+  xProperty: 'system:time_start',
+  seriesProperty:'FID_'
+})
+print(chart4,'chart4')
+var chart5 =ui. Chart.image.seriesByRegion({
+  imageCollection: b8A_res5,
+  regions: shp1,
+  reducer: ee.Reducer.mean(),
+  band: 'B8A_1',
+  scale: 10,
+  xProperty: 'system:time_start',
+  seriesProperty:'FID_'
+})
+print(chart5,'chart5')
+var chart6 =ui. Chart.image.seriesByRegion({
+  imageCollection: b8A_res6,
+  regions: shp1,
+  reducer: ee.Reducer.mean(),
+  band: 'B8A_1',
+  scale: 10,
+  xProperty: 'system:time_start',
+  seriesProperty:'FID_'
+})
+print(chart6,'chart6')
+var chart7 =ui. Chart.image.seriesByRegion({
+  imageCollection: b8A_res7,
+  regions: shp1,
+  reducer: ee.Reducer.mean(),
+  band: 'B8A_1',
+  scale: 10,
+  xProperty: 'system:time_start',
+  seriesProperty:'FID_'
+})
+print(chart7,'chart7')
+var chart8 =ui. Chart.image.seriesByRegion({
+  imageCollection: b8A_res8,
+  regions: shp1,
+  reducer: ee.Reducer.mean(),
+  band: 'B8A_1',
+  scale: 10,
+  xProperty: 'system:time_start',
+  seriesProperty:'FID_'
+})
+print(chart8,'chart8')
+var chart9 =ui. Chart.image.seriesByRegion({
+  imageCollection: b8A_res9,
+  regions: shp1,
+  reducer: ee.Reducer.mean(),
+  band: 'B8A_1',
+  scale: 10,
+  xProperty: 'system:time_start',
+  seriesProperty:'FID_'
+})
+print(chart9,'chart9')
+var chart10 =ui. Chart.image.seriesByRegion({
+  imageCollection: b8A_res10,
+  regions: shp1,
+  reducer: ee.Reducer.mean(),
+  band: 'B8A_1',
+  scale: 10,
+  xProperty: 'system:time_start',
+  seriesProperty:'FID_'
+})
+print(chart10,'chart10')
+var chart11 =ui. Chart.image.seriesByRegion({
+  imageCollection: b8A_res11,
+  regions: shp1,
+  reducer: ee.Reducer.mean(),
+  band: 'B8A_1',
+  scale: 10,
+  xProperty: 'system:time_start',
+  seriesProperty:'FID_'
+})
+print(chart11,'chart11')
+var chart12 =ui. Chart.image.seriesByRegion({
+  imageCollection: b8A_res12,
+  regions: shp1,
+  reducer: ee.Reducer.mean(),
+  band: 'B8A_1',
+  scale: 10,
+  xProperty: 'system:time_start',
+  seriesProperty:'FID_'
+})
+print(chart12,'chart12')
+var chart13 =ui. Chart.image.seriesByRegion({
+  imageCollection: b8A_res13,
+  regions: shp1,
+  reducer: ee.Reducer.mean(),
+  band: 'B8A_1',
+  scale: 10,
+  xProperty: 'system:time_start',
+  seriesProperty:'FID_'
+})
+print(chart13,'chart13')
+var chart14 =ui. Chart.image.seriesByRegion({
+  imageCollection: b8A_res14,
+  regions: shp1,
+  reducer: ee.Reducer.mean(),
+  band: 'B8A_1',
+  scale: 10,
+  xProperty: 'system:time_start',
+  seriesProperty:'FID_'
+})
+print(chart14,'chart14')
+var chart15 =ui. Chart.image.seriesByRegion({
+  imageCollection: b8A_res15,
+  regions: shp1,
+  reducer: ee.Reducer.mean(),
+  band: 'B8A_1',
+  scale: 10,
+  xProperty: 'system:time_start',
+  seriesProperty:'FID_'
+})
+print(chart15,'chart15')
